@@ -1,10 +1,10 @@
 import Post from "./Post.js";
+import PostService from "./PostService.js";
 
 class PostController {
   async create(req, res) {
     try {
-      const { auther, title, content, picture } = req.body;
-      const post = await Post.create({ auther, title, content, picture });
+      const post = await PostService.create(req.body);
       res.json(post);
     }
     catch (e) {
@@ -14,7 +14,7 @@ class PostController {
 
   async grtAll(req, res) {
     try {
-      const posts = await Post.find();
+      const posts = await PostService.grtAll();
       return res.json(posts);
     }
     catch (e) {
@@ -24,11 +24,7 @@ class PostController {
 
   async getOne(req, res) {
     try {
-      const { id } = req.params;
-      if (!id) {
-        res.status(400).json({ message: 'id не найден!' })
-      }
-      const post = await Post.findById(id);
+      const post = await PostService.getOne(req.params.id);
       return res.json(post);
     }
     catch (e) {
@@ -38,25 +34,17 @@ class PostController {
 
   async updata(req, res) {
     try {
-      const post = req.body;
-      if (!post._id) {
-        res.status(400).json({ message: 'id не найден!' })
-      }
-      const updatedPost = await Post.findByIdAndUpdate(post._id, post, { new: true });
+      const updatedPost = await PostService.updata(req.body);
       return res.json(updatedPost);
     }
     catch (e) {
-      res.status(500).json(e);
+      res.status(500).json(e.message);
     }
   }
 
   async delete(req, res) {
     try {
-      const { id } = req.params;
-      if (!id) {
-        res.status(400).json({ message: 'id не найден!' })
-      }
-      const post = await Post.findByIdAndDelete(id);
+      const post = await PostService.delete(req.params.id);
       return res.json(post);
     }
     catch (e) {
